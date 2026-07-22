@@ -85,6 +85,13 @@
             InstallDirectory = 'CC Switch'
             ExpectedPaths    = @('CC Switch.exe', 'cc-switch.exe')
         }
+        @{
+            Id               = 'Ngrok.Ngrok'
+            Name             = 'ngrok'
+            LocationMode     = 'Exact'
+            InstallDirectory = 'ngrok'
+            ExpectedPaths    = @('ngrok.exe')
+        }
         # @{
         #     Id               = 'ClashVergeRev.ClashVergeRev'
         #     Name             = 'Clash Verge Rev'

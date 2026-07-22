@@ -68,7 +68,7 @@ winget show --id <软件ID> --exact
 - `Root`：只传递 `D:\Program Files`，由安装器自行追加软件目录。
 - `Default`：不传递安装目录，由安装器或 Microsoft Store 管理。
 
-当前清单中 7-Zip、Snipaste、Typora、Git、Visual Studio Code、Notepad++、FFmpeg、CC Switch、Clash Verge Rev、NVM 和 Python 使用 `Exact`；Google Chrome、Bing Wallpaper、Fences 6 和 Focus 10 使用 `Default`。Bing Wallpaper 使用 Microsoft Store 当前官方包 `XPFP7F8RL7MB1W`；安装时仍需能够访问微软提供的下载地址。当前没有需要 `Root` 的软件。
+当前清单中 7-Zip、Snipaste、Typora、Git、Visual Studio Code、Notepad++、FFmpeg、CC Switch、ngrok、Clash Verge Rev、NVM 和 Python 使用 `Exact`；Google Chrome、Bing Wallpaper、Fences 6 和 Focus 10 使用 `Default`。Bing Wallpaper 使用 Microsoft Store 当前官方包 `XPFP7F8RL7MB1W`；安装时仍需能够访问微软提供的下载地址。当前没有需要 `Root` 的软件。
 
 `Exact` 和 `Root` 模式必须配置软件目录以及至少一个安装后验证文件：
 
