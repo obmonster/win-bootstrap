@@ -93,6 +93,13 @@
             ExpectedPaths    = @('ngrok.exe')
         }
         # @{
+        #     Id               = 'nginxinc.nginx'
+        #     Name             = 'nginx'
+        #     LocationMode     = 'Exact'
+        #     InstallDirectory = 'nginx'
+        #     ExpectedPaths    = @('nginx.exe', 'nginx-*\nginx.exe')
+        # }
+        # @{
         #     Id               = 'ClashVergeRev.ClashVergeRev'
         #     Name             = 'Clash Verge Rev'
         #     LocationMode     = 'Exact'
