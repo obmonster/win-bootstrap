@@ -1,6 +1,6 @@
 # win-bootstrap
 
-基于 PowerShell 和 winget 的 Windows 工作环境一键初始化工具。
+基于 PowerShell 和 winget 的 Windows 工作环境一键初始化工具，winget 中没有的字体通过 GitHub Releases 下载安装。
 
 ## 使用条件
 
@@ -148,6 +148,28 @@ NpmPackages = @(
 ```
 
 `Version` 可以设置为 `latest` 或明确的版本号，`Commands` 用于确认命令确实写入 `D:\Program Files\npm-global`。npm 全局包会在 NVM 安装并启用 Node.js 后处理。
+
+## 安装字体
+
+winget 源（包括微软的 `winget-font` 字体源）中找不到的字体，通过 `Fonts` 配置从 GitHub Releases 下载 zip 并安装到系统字体目录，例如 Fira Code：
+
+```powershell
+Fonts = @(
+    @{
+        Name     = 'Fira Code'
+        Version  = '6.2'
+        Url      = 'https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip'
+        TtfFiles = @(
+            @{ File = 'ttf/FiraCode-Regular.ttf'; RegistryName = 'Fira Code Regular' }
+            @{ File = 'ttf/FiraCode-Bold.ttf';    RegistryName = 'Fira Code Bold' }
+        )
+    }
+)
+```
+
+脚本会下载 zip、解压，把每个 `File` 指定的 ttf 复制到 `C:\Windows\Fonts`，并用 `RegistryName` 写入 Windows 字体注册表。`RegistryName` 必须与字体文件内部的完整名称一致，通常形如 `Fira Code Regular`。可变字体（如 `FiraCode-VF.ttf`）需要自己指定一个不与静态字重冲突的名称，例如 `Fira Code Variable`。
+
+字体安装不依赖 winget，也不使用 `InstallRoot`，安装后以「字体文件存在且注册表项正确」作为验证。已安装的字体不会重复下载。新字体需要重启或注销后才在应用列表中完整生效。
 
 ## 网络错误
 

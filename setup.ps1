@@ -426,6 +426,116 @@ function Install-NpmPackage {
     return $true
 }
 
+function Test-FontInstalled {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $RegistryName,
+
+        [Parameter(Mandatory = $true)]
+        [string] $FileName
+    )
+
+    $fontFile = Join-Path $env:WINDIR "Fonts\$FileName"
+    if (-not (Test-Path -LiteralPath $fontFile -PathType Leaf)) {
+        return $false
+    }
+
+    $registryPath = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts'
+    $registryValue = "$RegistryName (TrueType)"
+    $existing = Get-ItemProperty -Path $registryPath -Name $registryValue -ErrorAction SilentlyContinue
+    if ($null -eq $existing) {
+        return $false
+    }
+
+    return $existing.$registryValue -eq $FileName
+}
+
+function Install-FontPackage {
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable] $Font
+    )
+
+    Write-Host "`nChecking $($Font.Name)..." -ForegroundColor Cyan
+
+    if (-not $Font.Name -or -not $Font.Version -or -not $Font.Url -or -not $Font.TtfFiles) {
+        Write-Warning 'Font configuration requires Name, Version, Url and TtfFiles.'
+        return $false
+    }
+
+    foreach ($entry in $Font.TtfFiles) {
+        if (-not $entry.File -or -not $entry.RegistryName) {
+            Write-Warning "$($Font.Name) has a TtfFiles entry that requires File and RegistryName."
+            return $false
+        }
+    }
+
+    $allInstalled = $true
+    foreach ($entry in $Font.TtfFiles) {
+        $fileName = Split-Path -Leaf ([string] $entry.File)
+        if (-not (Test-FontInstalled -RegistryName $entry.RegistryName -FileName $fileName)) {
+            $allInstalled = $false
+        }
+    }
+
+    if ($allInstalled) {
+        Write-Host "$($Font.Name) is already installed and valid. Skipped." -ForegroundColor DarkGray
+        return $true
+    }
+
+    $tempDirectory = Join-Path $env:TEMP ("win-bootstrap-font-{0}" -f [guid]::NewGuid().ToString('N'))
+    $zipPath = Join-Path $tempDirectory 'font.zip'
+    try {
+        New-Item -ItemType Directory -Path $tempDirectory -Force | Out-Null
+        Write-Host "Downloading $($Font.Name) $($Font.Version)..." -ForegroundColor Yellow
+        Invoke-WebRequest -Uri $Font.Url -OutFile $zipPath -UseBasicParsing
+
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $tempDirectory)
+
+        $registryKey = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey(
+            'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts',
+            $true
+        )
+        if (-not $registryKey) {
+            Write-Warning 'The Windows font registry key is unavailable.'
+            return $false
+        }
+
+        try {
+            foreach ($entry in $Font.TtfFiles) {
+                $fileName = Split-Path -Leaf ([string] $entry.File)
+                $source = Join-Path $tempDirectory ([string] $entry.File)
+                $destination = Join-Path $env:WINDIR "Fonts\$fileName"
+                Copy-Item -LiteralPath $source -Destination $destination -Force
+                $registryKey.SetValue("$($entry.RegistryName) (TrueType)", $fileName)
+                Write-Host "Installed font: $($entry.RegistryName)" -ForegroundColor DarkGray
+            }
+        }
+        finally {
+            $registryKey.Close()
+        }
+    }
+    catch {
+        Write-Warning "$($Font.Name) installation failed: $($_.Exception.Message)"
+        return $false
+    }
+    finally {
+        Remove-Item -LiteralPath $tempDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    foreach ($entry in $Font.TtfFiles) {
+        $fileName = Split-Path -Leaf ([string] $entry.File)
+        if (-not (Test-FontInstalled -RegistryName $entry.RegistryName -FileName $fileName)) {
+            Write-Warning "$($Font.Name) installed, but its font registration failed for $fileName."
+            return $false
+        }
+    }
+
+    Write-Host "$($Font.Name) installed successfully and its fonts were verified." -ForegroundColor Green
+    return $true
+}
+
 if (-not (Test-Administrator)) {
     Write-Error 'Run install.cmd or start this script as administrator.'
     exit 1
@@ -505,6 +615,15 @@ if ($config.NpmPackages) {
     }
 }
 
+if ($config.Fonts) {
+    foreach ($font in $config.Fonts) {
+        if (-not $font.Name -or -not $font.Version -or -not $font.Url -or -not $font.TtfFiles) {
+            Write-Error 'Each font requires Name, Version, Url and TtfFiles.'
+            exit 1
+        }
+    }
+}
+
 $logDirectory = Join-Path $PSScriptRoot 'logs'
 New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 $logFile = Join-Path $logDirectory ("setup-{0}.log" -f (Get-Date -Format 'yyyyMMdd-HHmmss'))
@@ -517,6 +636,14 @@ try {
     foreach ($package in $config.Packages) {
         if (-not (Install-WingetPackage -Package $package -InstallRoot $config.InstallRoot)) {
             $failedPackages.Add($package.Name) | Out-Null
+        }
+    }
+
+    if ($config.Fonts) {
+        foreach ($font in $config.Fonts) {
+            if (-not (Install-FontPackage -Font $font)) {
+                $failedPackages.Add("font:$($font.Name)") | Out-Null
+            }
         }
     }
 
