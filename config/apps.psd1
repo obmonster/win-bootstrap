@@ -123,25 +123,22 @@
         # }
     )
 
-    # Fonts missing from winget sources are downloaded from GitHub Releases
-    # and installed into the system font directory. RegistryName is written
-    # to the Windows font registry and must match the font's internal name.
-    Fonts = @(
-        @{
-            Name     = 'Fira Code'
-            Version  = '6.2'
-            Url      = 'https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip'
-            TtfFiles = @(
-                @{ File = 'ttf/FiraCode-Regular.ttf';    RegistryName = 'Fira Code Regular' }
-                @{ File = 'ttf/FiraCode-Medium.ttf';     RegistryName = 'Fira Code Medium' }
-                @{ File = 'ttf/FiraCode-SemiBold.ttf';   RegistryName = 'Fira Code SemiBold' }
-                @{ File = 'ttf/FiraCode-Bold.ttf';       RegistryName = 'Fira Code Bold' }
-                @{ File = 'ttf/FiraCode-Light.ttf';      RegistryName = 'Fira Code Light' }
-                @{ File = 'ttf/FiraCode-Retina.ttf';     RegistryName = 'Fira Code Retina' }
-                @{ File = 'variable_ttf/FiraCode-VF.ttf'; RegistryName = 'Fira Code Variable' }
-            )
-        }
-    )
+    # Fonts = @(
+    #     @{
+    #         Name     = 'Fira Code'
+    #         Version  = '6.2'
+    #         Url      = 'https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip'
+    #         TtfFiles = @(
+    #             @{ File = 'ttf/FiraCode-Regular.ttf';    RegistryName = 'Fira Code Regular' }
+    #             @{ File = 'ttf/FiraCode-Medium.ttf';     RegistryName = 'Fira Code Medium' }
+    #             @{ File = 'ttf/FiraCode-SemiBold.ttf';   RegistryName = 'Fira Code SemiBold' }
+    #             @{ File = 'ttf/FiraCode-Bold.ttf';       RegistryName = 'Fira Code Bold' }
+    #             @{ File = 'ttf/FiraCode-Light.ttf';      RegistryName = 'Fira Code Light' }
+    #             @{ File = 'ttf/FiraCode-Retina.ttf';     RegistryName = 'Fira Code Retina' }
+    #             @{ File = 'variable_ttf/FiraCode-VF.ttf'; RegistryName = 'Fira Code Variable' }
+    #         )
+    #     }
+    # )
 
     # Node = @{
     #     Version            = 'lts'
@@ -165,6 +162,11 @@
     #         Name     = '@anthropic-ai/claude-code'
     #         Version  = 'latest'
     #         Commands = @('claude.cmd')
+    #     }
+    #     @{
+    #         Name     = 'opencode-ai'
+    #         Version  = 'latest'
+    #         Commands = @('opencode.cmd')
     #     }
     # )
 

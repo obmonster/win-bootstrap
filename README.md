@@ -27,6 +27,7 @@ Node.js 由 NVM for Windows 安装并启用 LTS 版本，随后会根据 `NpmPac
 - `pnpm`
 - `@openai/codex`
 - `@anthropic-ai/claude-code`
+- `opencode-ai`
 
 这些目录会加入当前用户的 `PATH`。由于它们位于 `Program Files` 下，后续通过 NVM 安装 Node.js 或更新 npm 全局包时可能需要管理员权限。
 
@@ -143,6 +144,11 @@ NpmPackages = @(
         Name     = '@anthropic-ai/claude-code'
         Version  = 'latest'
         Commands = @('claude.cmd')
+    }
+    @{
+        Name     = 'opencode-ai'
+        Version  = 'latest'
+        Commands = @('opencode.cmd')
     }
 )
 ```
