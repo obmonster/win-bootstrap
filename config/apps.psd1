@@ -141,6 +141,11 @@
     #         Version  = 'latest'
     #         Commands = @('codex.cmd')
     #     }
+    #     @{
+    #         Name     = '@anthropic-ai/claude-code'
+    #         Version  = 'latest'
+    #         Commands = @('claude.cmd')
+    #     }
     # )
 
     # Git = @{
