@@ -93,6 +93,24 @@
             ExpectedPaths    = @('ngrok.exe')
         }
         # @{
+        #     Id               = 'Oracle.MySQL'
+        #     Name             = 'MySQL'
+        #     DownloadUrl      = 'https://dev.mysql.com/downloads/installer/'
+        #     Scope            = 'machine'
+        #     LocationMode     = 'Exact'
+        #     InstallDirectory = 'MySQL'
+        #     ExpectedPaths    = @('bin\mysql.exe', 'bin\mysqld.exe')
+        # }
+        # @{
+        #     Id               = 'DBeaver.DBeaver.Community'
+        #     Name             = 'DBeaver Community'
+        #     DownloadUrl      = 'https://dbeaver.io/download/'
+        #     Scope            = 'machine'
+        #     LocationMode     = 'Exact'
+        #     InstallDirectory = 'DBeaver'
+        #     ExpectedPaths    = @('dbeaver.exe')
+        # }
+        # @{
         #     Id               = 'nginxinc.nginx'
         #     Name             = 'nginx'
         #     LocationMode     = 'Exact'
